@@ -1,4 +1,5 @@
 import csv
+import sys
 from datetime import datetime
 lista=[] #creo lista donde voy a guardar como elemento cada row(fila) que me llega del archivo
 csv.register_dialect('dialectoCheques',delimiter=',',quoting=csv.QUOTE_ALL)#creo un dialecto en el cual digo que el delimitante de cada elemento es una coma
