@@ -45,29 +45,25 @@ def procesar_datos(dni,salida,tipo):
             print(f"Tipo de cheque: {cheque['Tipo']}")
             print(f"Estado de cheque:{ cheque['Estado']}")
     elif salida == "csv":
-        new_file=open(f'{dni}{datetime.timestamp(datetime.now())}.csv','w+')
-        # new_file.writelines('NroCheque,CodigoBanco,CodigoSucursal,NumeroCuentaOrigen,NumeroCuentaDestino,Valor,FechaOrigen,FechaPago,DNI,Tipo,Estado')
-        escribir=writer(new_file)
-        escribir.writerow(dict(lista).keys())
-        for cheque  in lista:
-            escribir.writerow(cheque['DNI'])
-            escribir.writerow(cheque['NroCheque'])
-            escribir.writerow(cheque['CodigoBanco'])
-        new_file.close()
-        #for cheque  in lista:
-                #escribir.writerow(cheque['NroCheque'])
+       with open(f'{dni}{datetime.timestamp(datetime.now())}.csv','w', newline='') as fi:
+        fieldnames = ['NroCheque','CodigoBanco','CodigoSucursal','NumeroCuentaOrigen','NumeroCuentaDestino','Valor','FechaOrigen','FechaPago','DNI','Tipo','Estado']
+        writer = csv.DictWriter(fi, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
 
-        #            new_file.write(f"{cheque['DNI']},")
-        #            new_file.write(f"{cheque['NroCheque']}, ")
-        #            new_file.write(f"{cheque['CodigoBanco']}, ")
-        #            new_file.write(f"{cheque['NumeroCuentaOrigen']}, ")
-        #            new_file.write(f"{cheque['NumeroCuentaDestino']}, ")
-        #            new_file.write(f"{cheque['Valor']}, ")
-        #            new_file.write(f"{datetime.fromtimestamp(int(cheque['FechaOrigen']))}, ")
-        #            new_file.write(f"{datetime.fromtimestamp(int(cheque['FechaPago']))}, ")
-        #            new_file.write(f"{cheque['Tipo']}, ")
-        #            new_file.write(f"{cheque['Estado']}, ")
-                    
+        for cheque  in lista:
+            writer.writerow ({'NroCheque':cheque["NroCheque"],
+                            'CodigoBanco':cheque["CodigoBanco"],
+                            'CodigoSucursal':cheque["CodigoSucursal"],
+                            'NumeroCuentaOrigen':cheque["NumeroCuentaOrigen"],
+                            'NumeroCuentaDestino':cheque["NumeroCuentaDestino"],
+                            'Valor':cheque["Valor"],
+                            'FechaOrigen':datetime.fromtimestamp(int(cheque['FechaOrigen'])),
+                            'FechaPago':datetime.fromtimestamp(int(cheque['FechaPago'])),
+                            'DNI':cheque["DNI"],
+                            'Tipo':cheque["Tipo"],
+                            'Estado':cheque["Estado"]})
+
+
 if __name__=='__main__': #Entra en este if cuando apenas se ejecuta el codigo
     #sys.argv es un array donde se guaran los parametros ingresados en consola, (sys.argv[0]) si o si siempre debe ser el nombre del archivo py, por eso en lo que muestro no lo tengo en cuenta
     if (len(sys.argv) < 5):# Quiero minimo 4 parametros, la longitud es 5 porque tambien está el sys.argv[0]
@@ -84,8 +80,7 @@ if __name__=='__main__': #Entra en este if cuando apenas se ejecuta el codigo
         procesar_datos(dni,salida,tipo_cheque)
     elif len(sys.argv)==6:#hay un quinto parametro, el ultimo parametro es opcional
         parametro_opcional_1 = sys.argv[5]
-        validacion_parametro_opcional(parametro_opcional_1,5)
-        
+        validacion_parametro_opcional(parametro_opcional_1,5)    
     elif(len(sys.argv)==7):#hay un sexto parametro, los dos ultimos parametros son opcionales
         parametro_opcional_1 = sys.argv[5]
         parametro_opcional_2 = sys.argv[6]   
