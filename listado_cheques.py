@@ -1,5 +1,5 @@
 import sys
-import re 
+import re
 import csv
 from datetime import datetime
 
@@ -43,16 +43,10 @@ def procesar_datos(archivo,dni,salida,tipo,estado,fecha):
     if salida == "pantalla":
         print(lista)
         for cheque in lista: #muestreo de datos segun la key 
-            print(f"--------DNI: {cheque['DNI']}-------- ")
-            print(f"N° de cheque: {cheque['NroCheque']}")
-            print(f"Código de banco: {cheque['CodigoBanco']}")
             print(f"N° de cuenta de origen del cheque: {cheque['NumeroCuentaOrigen']}")
-            print(f"N° de cuenta de destino: {cheque['NumeroCuentaDestino']}")
             print(f"Valor de cheque: {cheque['Valor']}")
             print(f"Fecha de emisión: {datetime.fromtimestamp(int(cheque['FechaOrigen']))}") #paso el timestamp a fecha
             print(f"Fecha de cobro de cheque: {datetime.fromtimestamp(int(cheque['FechaPago']))}")
-            print(f"Tipo de cheque: {cheque['Tipo']}")
-            print(f"Estado de cheque:{ cheque['Estado']}")
     elif salida == "csv":
        with open(f'{dni}{datetime.timestamp(datetime.now())}.csv','w', newline='') as fi:
         fieldnames = ['NroCheque','CodigoBanco','CodigoSucursal','NumeroCuentaOrigen','NumeroCuentaDestino','Valor','FechaOrigen','FechaPago','DNI','Tipo','Estado']
@@ -60,17 +54,10 @@ def procesar_datos(archivo,dni,salida,tipo,estado,fecha):
         writer.writeheader()
 
         for cheque  in lista:
-            writer.writerow ({'NroCheque':cheque["NroCheque"],
-                            'CodigoBanco':cheque["CodigoBanco"],
-                            'CodigoSucursal':cheque["CodigoSucursal"],
-                            'NumeroCuentaOrigen':cheque["NumeroCuentaOrigen"],
-                            'NumeroCuentaDestino':cheque["NumeroCuentaDestino"],
-                            'Valor':cheque["Valor"],
-                            'FechaOrigen':datetime.fromtimestamp(int(cheque['FechaOrigen'])),
-                            'FechaPago':datetime.fromtimestamp(int(cheque['FechaPago'])),
-                            'DNI':cheque["DNI"],
-                            'Tipo':cheque["Tipo"],
-                            'Estado':cheque["Estado"]})
+            writer.writerow ({'NumeroCuentaOrigen':cheque["NumeroCuentaOrigen"],
+                           'Valor':cheque["Valor"],
+                           'FechaOrigen':datetime.fromtimestamp(int(cheque['FechaOrigen'])),
+                           'FechaPago':datetime.fromtimestamp(int(cheque['FechaPago']))})
 
 
 if __name__=='__main__': #Entra en este if cuando apenas se ejecuta el codigo
