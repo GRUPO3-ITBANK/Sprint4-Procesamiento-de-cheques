@@ -1,35 +1,44 @@
 import sys
-import re # importo para hacer expresiones regex
+import re 
 import csv
 from datetime import datetime
-from csv import writer
+
+expresion_regex_fecha= '\d{2}-\d{2}-\d{4}:\d{2}-\d{2}-\d{4}'#expresion regex de rango de fechas recibidas
 
 
-expresion_regex_fecha= '\d{2}-\d{2}-\d{4}:\d{2}-\d{2}-\d{4}'#expresion regex de fecha
 
-def comparacion_regex(expresion,txt):#funcion que sirve para saber si un texto matchea con el regex
+def comparacion_regex(expresion,txt):#funcion que sirve para saber si un texto matchea con una expresion regex
     comparacion= re.search(expresion, txt)
     coincide= True if comparacion else False
     return coincide
 
-def validacion_parametro_opcional(parametro,posicion):
-        if(parametro.lower() == 'pendiente' or parametro.lower() == 'aprobado' or parametro.lower() == 'rechazado'):
-            print('se trata de un cheque')
-        elif(comparacion_regex(expresion_regex_fecha,parametro)):
-            print('es una fecha')   
-        else:
-            print(f'no se ingresó ningún parametro válido para el prametro n° {posicion}')
+def comprobar_parametro(posicion): #funcion que me sirve para saber si en un parametro me pasaron rango de fechas o si me pasaron estado de cheque
+    global estado,fecha #para que permita modificar variables globales
+    
+    if(sys.argv[posicion].lower() == 'pendiente' or sys.argv[posicion].lower() == 'aprobado' or sys.argv[posicion].lower() == 'rechazado'):
+        estado = sys.argv[posicion]
+    elif(comparacion_regex(expresion_regex_fecha,sys.argv[posicion])):
+        fecha = sys.argv[posicion]
+    else:
+        print(f'no se ingresó ningún valor válido para el prametro n° {posicion}')
 
-def procesar_datos(dni,salida,tipo):
+def validacion_parametro_opcional():  #funcion que me sirve para saber  si hay uno o dos parametros opcionales
+    if (len(sys.argv)==6):
+        comprobar_parametro(5)
+    elif (len(sys.argv)==7): 
+        comprobar_parametro(5)
+        comprobar_parametro(6)
+
+def procesar_datos(archivo,dni,salida,tipo,estado,fecha):
     lista=[] #creo lista donde voy a guardar como elemento cada row(fila) que me llega del archivo
     csv.register_dialect('dialectoCheques',delimiter=',',quoting=csv.QUOTE_ALL)#creo un dialecto en el cual digo que el delimitante de cada elemento es una coma
-    file=open('archivo.csv')#abro el archivo de nombre archivo tipo csv
-    csvFile=csv.DictReader(file,dialect='dialectoCheques') #creo un lector de diccionario para mi archivo, que tenga en cuenta el "dialecto" para separar con comas
+    archivo=open(f'{archivo}')#abro el archivo de nombre archivo 
+    csvFile=csv.DictReader(archivo,dialect='dialectoCheques') #creo un lector de diccionario para mi archivo, que tenga en cuenta el "dialecto" para separar con comas
 
-    for row in csvFile:  #para cada linea le agrego la linea correspondiente a mi lista 
-            if(row['DNI']==dni and (row['Tipo']).lower()==tipo):
-                lista.append(dict(row))
-    file.close()#cierro archivo
+    for row in csvFile:  #para cada linea le agrego la linea correspondiente a mi lista si cumple con los filtros
+        if(row['DNI']==dni and row['Tipo'].lower()==tipo and ((estado != None and row["Estado"].lower() == estado) or estado == None)):
+            lista.append(dict(row))
+    archivo.close()
 
     if salida == "pantalla":
         print(lista)
@@ -65,27 +74,16 @@ def procesar_datos(dni,salida,tipo):
 
 
 if __name__=='__main__': #Entra en este if cuando apenas se ejecuta el codigo
-    #sys.argv es un array donde se guaran los parametros ingresados en consola, (sys.argv[0]) si o si siempre debe ser el nombre del archivo py, por eso en lo que muestro no lo tengo en cuenta
-    if (len(sys.argv) < 5):# Quiero minimo 4 parametros, la longitud es 5 porque tambien está el sys.argv[0]
+
+    #sys.argv es un array donde se guaran los parametros ingresados
+    if (len(sys.argv) < 5):#Si la longitud es menor a 5, significa que pasó menos de 4 parametros (sin contar sys.argv[0] que es el param con nombre del archivo py)
          print('Pasaste menos de 4 parametros, recordá que los parametros obligatorios son: nombre de archivo csv, DNI del cliente, formato de salida y tipo de cheque') 
          sys.exit(1)   
-    archivo = sys.argv[1]
-    dni = sys.argv[2]
-    salida = sys.argv[3]
-    tipo_cheque = sys.argv[4]
-
-    
-    if (len(sys.argv) ==5): #cuando se ingresan la cantidad de parametros obligatorios(4), 
-        print("Están bien los parámetros")
-        procesar_datos(dni,salida,tipo_cheque)
-    elif len(sys.argv)==6:#hay un quinto parametro, el ultimo parametro es opcional
-        parametro_opcional_1 = sys.argv[5]
-        validacion_parametro_opcional(parametro_opcional_1,5)    
-    elif(len(sys.argv)==7):#hay un sexto parametro, los dos ultimos parametros son opcionales
-        parametro_opcional_1 = sys.argv[5]
-        parametro_opcional_2 = sys.argv[6]   
-        validacion_parametro_opcional(parametro_opcional_1,5)
-        validacion_parametro_opcional(parametro_opcional_2,6)
-        
-    elif(len(sys.argv)>7):
+    #declaro variables estado y fecha para los parametros opcionales     
+    estado = None
+    fecha = None
+    validacion_parametro_opcional() #me fijo si hay parametros opcionales y la función ejecutará una función para ver qué contienen
+    if (len(sys.argv)>7):
         print('Ingresaste una cantidad de parametros incorrecta, acordate que podes pasar hasta 6 parametros (4 obligatorios, 2 opcionales')
+    procesar_datos(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],estado,fecha) #proceso todo lo recibido
+
