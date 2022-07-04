@@ -1,4 +1,5 @@
 import csv
+import sys
 import argparse
 from datetime import datetime
 
@@ -30,7 +31,11 @@ with open(nombreArchivo, 'r') as file:
     csv_file = csv.DictReader(file, dialect='dialectoCheques')
     for row in csv_file:
         if (int(row["DNI"]) == dni and row["Tipo"] == chequeEmitido and ((estadoCheque != None and row["Estado"] == estadoCheque) or (estadoCheque == None))):
-            lista.append(dict(row))
+            if (any(r['NroCheque'] == row['NroCheque'] for r in lista)):
+                print(f"Error: Número de cheque {row['NroCheque']} repetido para el DNI {dni}")
+                sys.exit()
+            else:
+                lista.append(dict(row))
         
 file.close()
 
