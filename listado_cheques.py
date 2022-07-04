@@ -26,7 +26,7 @@ def comprobar_parametro(posicion):
             fecha_inicio= convertir_mis_fechas(sys.argv[posicion][0:10])
             fecha_final = convertir_mis_fechas(sys.argv[posicion][-10:])
         except:
-            print("La fecha ingresada es inválida, se filtrará omitiendo la")
+            print("La fecha ingresada es inválida, se filtrará omitiéndola")
     else:
         print(f'No se ingresó ningún valor válido para el prametro n° {posicion}. Se omitirá este filtro. \n')
 
