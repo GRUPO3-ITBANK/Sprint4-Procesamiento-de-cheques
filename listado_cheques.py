@@ -102,6 +102,7 @@ if __name__=='__main__':
     validacion_parametro_opcional() 
     if (len(sys.argv)>7):
         print('Ingresaste una cantidad de parametros incorrecta, acordate que podes pasar hasta 6 parametros (4 obligatorios, 2 opcionales)')
+        sys.exit()
     procesar_datos(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],estado,fecha_inicio,fecha_final) #Proceso todo lo recibido
 
 
