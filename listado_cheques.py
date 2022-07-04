@@ -34,7 +34,7 @@ def comprobar_parametro(posicion):
 if (len(sys.argv) < 5):
     #Si longitud es menor a 5, pasó menos de 4 parametros (sin contar sys.argv[0] que es el param con nombre del archivo py)
     print('Pasaste menos de 4 parametros, recordá que los parametros obligatorios son: nombre de archivo csv, DNI del cliente, formato de salida y tipo de cheque') 
-    sys.exit(1)   
+    sys.exit()   
 if (len(sys.argv)>7):
     print('Ingresaste una cantidad de parametros incorrecta, acordate que podes pasar hasta 6 parametros (4 obligatorios, 2 opcionales)')
     sys.exit()
@@ -93,13 +93,14 @@ else:
             print(f"Fecha de cobro de cheque: {datetime.fromtimestamp(int(cheque['FechaPago']))}")
             print(f"Tipo de cheque: {cheque['Tipo']}")
             print(f"Estado de cheque:{ cheque['Estado']}")
+
     elif sys.argv[3].lower() == "csv":
         nuevo_archivo= open(f'{sys.argv[2]}{datetime.timestamp(datetime.now())}.csv','w', newline='')
-        campos_header = ['Numero de cuenta de origen','Valor','Fecha de origen','Fecha de pago']
-        escribir = csv.DictWriter(nuevo_archivo, delimiter=":", fieldnames=campos_header)
+        campos_header = ['Num. Cta. Origen','Valor','Fecha de origen','Fecha de pago']
+        escribir = csv.DictWriter(nuevo_archivo, delimiter=",", fieldnames=campos_header)
         escribir.writeheader()
         for cheque  in lista:
-            escribir.writerow ({'Numero de cuenta de origen':cheque["NumeroCuentaOrigen"],
+            escribir.writerow ({'Num. Cta. Origen':cheque["NumeroCuentaOrigen"],
                         'Valor':cheque["Valor"],
                         'Fecha de origen':datetime.fromtimestamp(int(cheque['FechaOrigen'])),
                         'Fecha de pago':datetime.fromtimestamp(int(cheque['FechaPago']))})
