@@ -5,8 +5,8 @@ from datetime import datetime
 
 #Funcion para saber si un texto matchea con una expresion regex
 def comparacion_regex(expresion,txt):
-    comparacion= re.search(expresion, txt)
-    coincide= True if comparacion else False
+    comparacion = re.search(expresion, txt)
+    coincide = True if comparacion else False
     return coincide
 
 #Funcion para convertir una fecha ingresada
@@ -22,8 +22,11 @@ def comprobar_parametro(posicion):
     if(sys.argv[posicion].lower() == 'pendiente' or sys.argv[posicion].lower() == 'aprobado' or sys.argv[posicion].lower() == 'rechazado'):
         estado = sys.argv[posicion]
     elif(comparacion_regex('\d{2}-\d{2}-\d{4}:\d{2}-\d{2}-\d{4}',sys.argv[posicion])):
-        fecha_inicio= convertir_mis_fechas(sys.argv[posicion][0:10])
-        fecha_final = convertir_mis_fechas(sys.argv[posicion][-10:])
+        try:
+            fecha_inicio= convertir_mis_fechas(sys.argv[posicion][0:10])
+            fecha_final = convertir_mis_fechas(sys.argv[posicion][-10:])
+        except:
+            print("La fecha ingresada es inválida, se filtrará omitiendo la")
     else:
         print(f'No se ingresó ningún valor válido para el prametro n° {posicion}. Se omitirá este filtro. \n')
 
